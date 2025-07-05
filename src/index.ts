@@ -46,15 +46,16 @@ client.on('guildMemberAdd', async (member: GuildMember) => {
 
   console.log(`👤 ${member.user.tag} зашёл по ссылке ${usedInvite.code} от ${usedInvite.inviter?.tag}`);
 
-  // Пример: проверка на определённую ссылку и выдача роли
-  const inviteCodeToRoleId: Record<string, string> = {
-    'fDVmXCAEXa': '1378973323840454849', // замени на реальные
-    'KdvsRKdyNH': '1378845872942616689',
-    'rtFJPgT6pT': '1378846211435663441',
-    'KfEABBUQfv': '1378846088685031556',
-    'SkpDgAn85d': '1378846423302279178'
-  };
+// Загружаем JSON из .env
+  const rawMap = process.env.INVITE_ROLE_MAP;
+  let inviteCodeToRoleId: Record<string, string> = {};
 
+  try {
+    if (rawMap) inviteCodeToRoleId = JSON.parse(rawMap);
+  } catch (err) {
+    console.error('❌ Ошибка при парсинге INVITE_ROLE_MAP из .env:', err);
+    return;
+  }
   const roleId = inviteCodeToRoleId[usedInvite.code];
 
   if (roleId) {
